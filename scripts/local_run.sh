@@ -9,19 +9,19 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 WORK_DIR="${COZE_WORKSPACE_PATH:-$(dirname "$SCRIPT_DIR")}"
 
 usage() {
-  echo "用法: $0 -m <模式> [-n <节点ID>] [-i <输入JSON>]"
+  echo "Usage: $0 -m <mode> [-n <node_id>] [-i <input_json>]"
   echo ""
-  echo "参数说明:"
-  echo "  -m <模式>        运行模式: http, flow, node, agent"
-  echo "  -n <节点ID>      节点ID (仅在 node 模式下需要)"
-  echo "  -i <输入JSON>    输入数据，支持 JSON 字符串或纯文本"
-  echo "  -h              显示帮助信息"
+  echo "Options:"
+  echo "  -m <mode>        Run mode: http, flow, node, agent"
+  echo "  -n <node_id>     Node ID (required for node mode only)"
+  echo "  -i <input_json>  Input data, supports JSON string or plain text"
+  echo "  -h               Show this help message"
   echo ""
-  echo "示例:"
+  echo "Examples:"
   echo "  $0 -m flow"
-  echo "  $0 -m flow -i '{\"text\": \"你好\"}'"
-  echo "  $0 -m flow -i '你好'"
-  echo "  $0 -m node -n node_1 -i '{\"text\": \"测试\"}'"
+  echo "  $0 -m flow -i '{\"text\": \"Hello\"}'"
+  echo "  $0 -m flow -i 'Hello'"
+  echo "  $0 -m node -n node_1 -i '{\"text\": \"test\"}'"
 }
 
 while getopts "m:n:i:h" opt; do
@@ -40,7 +40,7 @@ while getopts "m:n:i:h" opt; do
       exit 0
       ;;
     \?)
-      echo "无效选项: -$OPTARG"
+      echo "Invalid option: -$OPTARG"
       usage
       exit -1
       ;;
@@ -48,29 +48,29 @@ while getopts "m:n:i:h" opt; do
 done
 
 if [ -z "$mode" ]; then
-  echo "错误: 必须指定 -m 参数"
+  echo "Error: Mode is required"
   usage
-  exit -1
+  exit 1
 fi
 
+cd "$WORK_DIR"
 
-# Load environment variables
-if [ -f "${SCRIPT_DIR}/load_env.sh" ]; then
-  echo "Loading environment variables..."
-  source "${SCRIPT_DIR}/load_env.sh"
-fi
-
-# Build python command
-cmd="python ${WORK_DIR}/src/main.py -m \"$mode\""
-
-if [ -n "$node" ]; then
-  cmd="$cmd -n \"$node\""
-fi
-
-if [ -n "$input" ]; then
-  cmd="$cmd -i '$input'"
-fi
-
-# Execute command
-echo "Executing: $cmd"
-eval $cmd
+case "$mode" in
+  http)
+    echo "Starting HTTP server..."
+    exec python -m uvicorn src.main:app --host 0.0.0.0 --port 8000
+    ;;
+  flow|node|agent)
+    echo "Running in $mode mode..."
+    if [ "$mode" = "node" ] && [ -z "$node" ]; then
+      echo "Error: Node ID is required for node mode"
+      exit 1
+    fi
+    exec python -m src.main "$mode" ${node:+-n "$node"} ${input:+-i "$input"}
+    ;;
+  *)
+    echo "Error: Unknown mode '$mode'"
+    usage
+    exit 1
+    ;;
+esac

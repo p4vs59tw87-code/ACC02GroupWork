@@ -1,13 +1,12 @@
 #!/bin/bash
 
 set -e
-# 导出环境变量
 
 WORK_DIR="${COZE_WORKSPACE_PATH:-.}"
 PORT=8000
 
 usage() {
-  echo "用法: $0 -p <端口>"
+  echo "Usage: $0 -p <port>"
 }
 
 while getopts "p:h" opt; do
@@ -20,16 +19,13 @@ while getopts "p:h" opt; do
       exit 0
       ;;
     \?)
-      echo "无效选项: -$OPTARG"
       usage
       exit 1
       ;;
   esac
 done
 
-# 激活 .venv（devbox 环境），deploy 无 .venv 则跳过
-if [ -f "${WORK_DIR}/.venv/bin/activate" ]; then
-  source "${WORK_DIR}/.venv/bin/activate"
-fi
+cd "$WORK_DIR"
 
-python ${WORK_DIR}/src/main.py -m http -p $PORT
+echo "Starting HTTP server on port $PORT..."
+exec python -m uvicorn src.main:app --host 0.0.0.0 --port "$PORT"

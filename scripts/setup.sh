@@ -1,14 +1,14 @@
 #!/bin/bash
 set -eo pipefail
 
-# 初始化目录
+# Initialize directories
 if [ "$COZE_PROJECT_ENV" = "DEV" ]; then
   if [ ! -d "${COZE_WORKSPACE_PATH}/assets" ]; then
     mkdir -p "${COZE_WORKSPACE_PATH}/assets"
   fi
 fi
 
-# uv 安装依赖
+# Install dependencies using uv
 if [ -n "$PIP_TARGET" ]; then
   echo "[setup] Deploy mode (uv): installing to PIP_TARGET=$PIP_TARGET"
   uv export --frozen --no-hashes --no-dev | uv pip install --no-cache --target "$PIP_TARGET" -r -

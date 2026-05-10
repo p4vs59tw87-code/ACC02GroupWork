@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# 加载项目环境变量脚本
-# 使用方式: source ./load_env.sh 或 . ./load_env.sh
+# Load project environment variables
+# Usage: source ./load_env.sh or . ./load_env.sh
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
