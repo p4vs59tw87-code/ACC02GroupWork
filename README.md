@@ -1,12 +1,12 @@
-# Discription of the project structure
+# 项目结构说明
 
-# Local run
-## Run process
+# 本地运行
+## 运行流程
 bash scripts/local_run.sh -m flow
 
-## Run points
+## 运行节点
 bash scripts/local_run.sh -m node -n node_name
 
-# Start HTTP service
+# 启动HTTP服务
 bash scripts/http_run.sh -m http -p 5000
 
