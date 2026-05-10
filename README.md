@@ -1,16 +1,12 @@
-# User Guide: EV Valuation Agent
+# 项目结构说明
 
-## 1. Who This Product Is For
+# 本地运行
+## 运行流程
+bash scripts/local_run.sh -m flow
 
-This tool is designed for equity research analysts covering the **China New Energy Passenger Vehicle (NEPV)** industry. It supports valuation analysis for companies including BYD, Li Auto, XPeng, and NIO.
+## 运行节点
+bash scripts/local_run.sh -m node -n node_name
 
-## 2. How to Use the System
+# 启动HTTP服务
+bash scripts/http_run.sh -m http -p 5000
 
-### Step 1: Export Data from WRDS
-
-1. Ensure you have WRDS access configured on your machine.
-2. Download the `wrds_export.py` script from the `src/` folder.
-3. Update the `operating_data` dictionary in the script with the latest delivery and ASP data from company annual reports.
-4. Run the script:
-   ```bash
-   python wrds_export.py
